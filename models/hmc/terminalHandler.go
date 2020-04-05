@@ -6,7 +6,6 @@ import (
 	"github.com/aurora/autodeploy/models/autoyast"
 	"github.com/aurora/autodeploy/pkg/setting"
 	"github.com/aurora/autodeploy/utils"
-	"github.com/gdamore/tcell"
 	"github.com/rivo/tview"
 	"io/ioutil"
 	"strings"
@@ -76,7 +75,7 @@ func Partition() (title string, content tview.Primitive) {
 				for _, lparObj := range lparObjUriList {
 					for lparName, lparUri := range lparObj {
 						if db.GetLunid(lparName) != "" {
-							err := StartLpars(lparName, lparUri)
+							err := StartLpars(lparUri)
 							if err != nil {
 								_, _ = fmt.Fprintf(logText, "[#ff0000]分区[%s]发送启动分区指令失败\n", lparName)
 							} else {
@@ -95,7 +94,7 @@ func Partition() (title string, content tview.Primitive) {
 				lparObjUriList, sgObjUriList = db.GetLparAndSGInfoFromDb()
 				for _, lparObj := range lparObjUriList {
 					for lparName, lparUri := range lparObj {
-						err := StopLpars(lparName, lparUri)
+						err := StopLpars(lparUri)
 						if err != nil {
 							_, _ = fmt.Fprintf(logText, "[#ff0000]分区[%s]发送停止分区指令失败\n", lparName)
 						} else {
@@ -326,16 +325,17 @@ func OS() (title string, content tview.Primitive) {
 		})
 	return "安装系统", MenuList(10, listView)
 }
-func Database() (title string, content tview.Primitive) {
-	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
-	})
-	return "查看数据库", MenuList(10, textView)
-}
-func AutoDeploy() (title string, content tview.Primitive) {
-	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
-	}).SetBorder(true)
-	return "自动部署", MenuList(10, textView)
-}
+
+//func Database() (title string, content tview.Primitive) {
+//	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
+//	})
+//	return "查看数据库", MenuList(10, textView)
+//}
+//func AutoDeploy() (title string, content tview.Primitive) {
+//	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
+//	}).SetBorder(true)
+//	return "自动部署", MenuList(10, textView)
+//}
 func Help() (title string, content tview.Primitive) {
 	textView := tview.NewTextView().
 		SetDynamicColors(true).

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func StopLpars(lparName string, lparUri string) (err error) {
+func StopLpars(lparUri string) (err error) {
 	var req *http.Request
 	req, err = http.NewRequest("POST", setting.BaseUrl+lparUri+"/operations/stop", nil)
 	utils.NetRequest(req)

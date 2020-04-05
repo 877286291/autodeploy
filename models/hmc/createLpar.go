@@ -21,7 +21,7 @@ func CreateLpar(lparInfo map[string]interface{}) (lparObjUri string) {
 	req, err := http.NewRequest("POST", setting.BaseUrl+"/api/cpcs/"+setting.CpcId+"/partitions", body)
 	if err != nil {
 		_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-		log.Fatal(err)
+		log.Println(err)
 	}
 	resp := utils.NetRequest(req)
 	var ok bool
