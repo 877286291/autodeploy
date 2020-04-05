@@ -1,0 +1,15 @@
+﻿label,cpc_name,lpar_name,short_name,description,ifl_processors,initial_memory,maximum_memory,nic_name,device_number,nic_adapter_name,nic_adapter_port,host_name,ip_addr,gateway,net_mask,dns,os_version,sg_name,path,size
+crt_lpar,00291B8,BB04,BB04,HYJ test01,1,2,4,eth0,3000,OSD 0140 Z22B-20,0,BB04,172.16.36.11,172.16.36.1,255.255.255.0,0,sles12sp4,BB04,4,200
+,,,,,,,,eth1,3100,OSD 0174 Z22B-36,1,,,,,,,tape_BB04,4,0
+,,,,,,,,eth2,3200,RoCE 0104 Z22B-02,1,,,,,,,,,
+,,,,,,,,eth3,3300,RoCE 012C Z22B-14,2,,,,,,,,,
+,,,,,,,,eth4,3400,OSD 0108 Z22B-03,0,,,,,,,,,
+,,,,,,,,eth5,3500,OSD 0178 Z22B-37,0,,,,,,,,,
+crt_lpar,00291B8,BB05,BB05,HYJ test02,1,2,4,eth0,3000,OSD 0140 Z22B-20,0,BB05,172.16.36.12,172.16.36.1,255.255.255.0,0,sles12sp4,BB05,4,200
+,,,,,,,,eth1,3100,OSD 0174 Z22B-36,1,,,,,,,tape_BB05,4,0
+,,,,,,,,eth2,3200,RoCE 0168 Z22B-32,2,,,,,,,,,
+,,,,,,,,eth3,3300,RoCE 017C Z22B-38,1,,,,,,,,,
+crt_lpar,00291B8,hyj_test_root,BB06,HYJ test03,1,2,4,eth0,3000,OSD 0140 Z22B-20,0,hyj_test_root,172.16.36.13,172.16.36.1,255.255.255.0,0,sles12sp4,hyj_test_root,4,200
+,,,,,,,,eth1,3100,OSD 0174 Z22B-36,1,,,,,,,tape_hyj_test_root,4,0
+,,,,,,,,eth2,3200,OSD 0108 Z22B-03,0,,,,,,,,,
+,,,,,,,,eth3,3300,OSD 0178 Z22B-37,0,,,,,,,,,
