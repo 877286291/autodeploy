@@ -339,13 +339,44 @@ func OsStandardization() (title string, content tview.Primitive) {
 			// todo 系统标准化
 
 		}()
-	}).AddItem("系统网络配置", "", '3', func() {
+	}).AddItem("网络连通性测试", "", '3', func() {
 		go func() {
-			// todo 系统标准化
+
+		}()
+	}).AddItem("roce_bond配置文件创建", "", 'a', func() {
+		go func() {
+
+		}()
+	}).AddItem("osa_bond配置文件创建", "", 'b', func() {
+		go func() {
+
+		}()
+	}).AddItem("roce_vlan配置文件创建", "", 'c', func() {
+		go func() {
+
+		}()
+	}).AddItem("osa_vlan配置文件创建", "", 'd', func() {
+		go func() {
+
+		}()
+	}).AddItem("网卡配置文件发送/启用", "", 'e', func() {
+		go func() {
+
+		}()
+	}).AddItem("删除网卡", "", 'f', func() {
+		go func() {
+
+		}()
+	}).AddItem("内核参数修改", "", 'g', func() {
+		go func() {
+
+		}()
+	}).AddItem("host节点网络重启", "", 'h', func() {
+		go func() {
 
 		}()
 	})
-	return "系统标准化", MenuList(10, listView)
+	return "系统标准化", MenuList(22, listView)
 }
 
 //func Database() (title string, content tview.Primitive) {
