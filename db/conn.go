@@ -112,10 +112,12 @@ func GetLunid(lparName string) (lunId string) {
 	return
 }
 func UpdateLunid(lunId, sgUri string) {
-	statement, _ := database.Prepare("UPDATE lpar_info SET lunid=? WHERE sguri=?")
-	_, err := statement.Exec(lunId, sgUri)
-	if err != nil {
-		//log.Println(err)
+	if lunId != "" && sgUri != "" {
+		statement, _ := database.Prepare("UPDATE lpar_info SET lunid=? WHERE sguri=?")
+		_, err := statement.Exec(lunId, sgUri)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 }
 
