@@ -326,6 +326,28 @@ func OS() (title string, content tview.Primitive) {
 	return "安装系统", MenuList(10, listView)
 }
 
+// 系统标准化
+func OsStandardization() (title string, content tview.Primitive) {
+	listView := tview.NewList().
+		AddItem("host节点基础配置", "", '1', func() {
+			go func() {
+				// todo 系统标准化
+
+			}()
+		}).AddItem("软件安装", "", '2', func() {
+		go func() {
+			// todo 系统标准化
+
+		}()
+	}).AddItem("系统网络配置", "", '3', func() {
+		go func() {
+			// todo 系统标准化
+
+		}()
+	})
+	return "系统标准化", MenuList(10, listView)
+}
+
 //func Database() (title string, content tview.Primitive) {
 //	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
 //	})

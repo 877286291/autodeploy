@@ -20,6 +20,7 @@ func main() {
 		hmc.Partition,
 		hmc.SG,
 		hmc.OS,
+		hmc.OsStandardization,
 		//hmc.Database,
 		//hmc.AutoDeploy,
 	}
