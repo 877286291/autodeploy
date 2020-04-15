@@ -51,15 +51,11 @@ func UpdateLparUri(lparUri, lparName string) {
 	}
 }
 
-func GetLparUri(lparName string) (lparUri string) {
+func GetLparUri(lparName string) (lparUri string, err error) {
 	rows, _ := database.Query("SELECT lparuri from lpar_info WHERE lparname='" + lparName + "'")
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&lparUri)
-		if err != nil {
-			_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-			log.Fatal(err)
-		}
+		err = rows.Scan(&lparUri)
 	}
 	return
 }

@@ -31,10 +31,11 @@ func CreateLpar(lparInfo map[string]interface{}) (lparObjUri string) {
 		db.UpdateLparUri(lparObjUri, lparInfo["name"].(string))
 	} else {
 		// 如果没有获取到lapr对象的uri，说明已经存在该分区，接下来获取这个分区的uri
-		lparObjUri = db.GetLparUri(lparInfo["name"].(string))
-		if err != nil {
+		var errGetLparUri error
+		lparObjUri, errGetLparUri = db.GetLparUri(lparInfo["name"].(string))
+		if errGetLparUri != nil {
 			// 如果lparuri在数据库中找不到，则调用HMC API进行查找并更新到数据库中
-			if err.Error() == "sql: Scan error on column index 0, name \"lparuri\": converting NULL to string is unsupported" {
+			if errGetLparUri.Error() == "sql: Scan error on column index 0, name \"lparuri\": converting NULL to string is unsupported" {
 				lparObjUri = findLparByName(lparInfo["name"].(string))
 				// 找到lparuri，更新数据库
 				db.UpdateLparUri(lparObjUri, lparInfo["name"].(string))
