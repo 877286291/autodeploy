@@ -82,7 +82,7 @@ func Partition() (title string, content tview.Primitive) {
 								_, _ = fmt.Fprintf(logText, "[#008000]分区[%s]发送启动分区指令成功\n", lparName)
 							}
 						} else {
-							_, _ = fmt.Fprintf(logText, "[#ff0000]分区[%s]发送启动分区指令失败\n", lparName)
+							_, _ = fmt.Fprintf(logText, "[#ff0000]分区[%s]请先获取该分区的lunid再进行启动！\n", lparName)
 						}
 					}
 				}
