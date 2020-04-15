@@ -263,8 +263,14 @@ func SG() (title string, content tview.Primitive) {
 		AddItem("获取Lunid", "", '5', func() {
 			go func() {
 				_, _ = fmt.Fprintf(logText, "%s 执行获取lunid\n", time.Now().Format("2006-01-02 15:04:05"))
+				_, sgObjUriList = db.GetLparAndSGInfoFromDb()
+			Loop:
 				for _, SGObjUri := range sgObjUriList {
 					for sgName, sgUri := range SGObjUri {
+						if sgUri == "" {
+							_, _ = fmt.Fprintf(logText, "[#ff0000]数据库中[%s]sguri为空，请手动执行[创建SG]指令\n", sgName)
+							continue Loop
+						}
 						lunId := GetLunId(sgUri)
 						if lunId != "" {
 							_, _ = fmt.Fprintf(logText, "[#008000]SG[%s]lunid为%s\n", sgName, lunId)

@@ -102,7 +102,7 @@ func GetLunid(lparName string) (lunId string) {
 		err := rows.Scan(&lunId)
 		if err != nil {
 			if err.Error() == "sql: Scan error on column index 0, name \"lunid\": converting NULL to string is unsupported" {
-				//log.Printf("[%s]分区未获取到lunid，请检查！", lparName)
+				_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
 			} else {
 				_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
 				log.Fatal(err)
