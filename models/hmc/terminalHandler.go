@@ -338,10 +338,8 @@ func OsStandardization() (title string, content tview.Primitive) {
 	listView := tview.NewList().
 		AddItem("host节点基础配置", "", '1', func() {
 			go func() {
-				/*
-					todo 连接上分区
-				*/
-				if err := sysconfig.BaseConfig(); err != nil {
+				_, _ = fmt.Fprintf(logText, "%s 执行修改hostname,请稍等\n", time.Now().Format("2006-01-02 15:04:05"))
+				if _, err := sysconfig.BaseConfig(); err != nil {
 					_, _ = fmt.Fprintln(logText, "[#ff0000]hostname修改失败")
 				} else {
 					_, _ = fmt.Fprintln(logText, "[#008000]hostname修改成功")
@@ -350,12 +348,22 @@ func OsStandardization() (title string, content tview.Primitive) {
 			}()
 		}).AddItem("软件安装", "", '2', func() {
 		go func() {
-			// todo 系统标准化
 
 		}()
 	}).AddItem("网络连通性测试", "", '3', func() {
 		go func() {
-
+			_, _ = fmt.Fprintf(logText, "%s 执行检查网络连通性,请稍等\n", time.Now().Format("2006-01-02 15:04:05"))
+			for _, obj := range sysconfig.IpList {
+				for lparName, ip := range obj {
+					go func() {
+						if _, err := sysconfig.CheckConn(ip); err != nil {
+							_, _ = fmt.Fprintf(logText, "[#ff0000]FTP到%s网络没有连通\n", lparName)
+						} else {
+							_, _ = fmt.Fprintf(logText, "[#008000]FTP到%s网络连通成功\n", lparName)
+						}
+					}()
+				}
+			}
 		}()
 	}).AddItem("roce_bond配置文件创建", "", 'a', func() {
 		go func() {

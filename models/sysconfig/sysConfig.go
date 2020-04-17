@@ -1,46 +1,35 @@
 package sysconfig
 
 import (
+	"bytes"
 	"github.com/aurora/autodeploy/db"
 	"github.com/aurora/autodeploy/utils"
 	"io/ioutil"
-	"log"
-	"os/exec"
 )
 
-var ipList []map[string]string
+var IpList []map[string]string
 
 func init() {
-	ipList = db.GetIp()
+	IpList = db.GetIp()
 }
 
 // 更改hostname
-func BaseConfig() (err error) {
-	for _, obj := range ipList {
+func BaseConfig() (stdout bytes.Buffer, err error) {
+	//var stdout bytes.Buffer
+	for _, obj := range IpList {
 		for lparName, ip := range obj {
-			if err = utils.LparExecShell(ip, "echo "+lparName+">/etc/hostname"); err != nil {
+			if stdout, err = utils.LparExecShell(ip, "echo "+lparName+">/etc/hostname"); err != nil {
 				_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-				log.Fatal(err)
+				return
 			}
 		}
 	}
 	return
 }
-func CheckConn() {
-	for _, obj := range ipList {
-		for _, ip := range obj {
-			command := exec.Command("cmd", "ping", ip)
-			command.Run()
-		}
+func CheckConn(ip string) (stdout bytes.Buffer, err error) {
+	if stdout, err = utils.LparExecShell(ip, "ping -c 1  -i  2 -s 2048 -W 1 "+ip); err != nil {
+		_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
+		return
 	}
-}
-func ConnHost() {
-	for _, obj := range ipList {
-		for _, ip := range obj {
-			if err := utils.LparExecShell(ip, "pwd"); err != nil {
-				_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-				log.Fatal(err)
-			}
-		}
-	}
+	return
 }

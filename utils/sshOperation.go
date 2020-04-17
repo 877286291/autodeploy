@@ -1,12 +1,12 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/aurora/autodeploy/pkg/setting"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"net"
-	"os"
 	"time"
 )
 
@@ -70,14 +70,14 @@ func FtpExecShell(command string) {
 }
 
 // 分区上执行shell命令
-func LparExecShell(ip, command string) (err error) {
-	session, err := Connect("root", "P1cc@xfzy", ip, 22)
+func LparExecShell(ip, command string) (stdoutBuf bytes.Buffer, err error) {
+	var session *ssh.Session
+	session, err = Connect("root", "P1cc@xfzy", ip, 22)
 	if err != nil {
-		return err
+		return
 	}
 	defer session.Close()
-	session.Stdout = os.Stdout
-	session.Stderr = os.Stderr
-	_ = session.Run(command)
+	session.Stdout = &stdoutBuf
+	err = session.Run(command)
 	return
 }
