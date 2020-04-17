@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/aurora/autodeploy/db"
 	"github.com/aurora/autodeploy/models/autoyast"
+	"github.com/aurora/autodeploy/models/sysconfig"
 	"github.com/aurora/autodeploy/pkg/setting"
 	"github.com/aurora/autodeploy/utils"
 	"github.com/rivo/tview"
@@ -320,11 +321,11 @@ func OS() (title string, content tview.Primitive) {
 				err := utils.Upload("SLE12_SP4.iso", "/home/"+setting.FtpUserName+"/"+setting.AutoYastDir)
 				if err != nil {
 					_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-					_, _ = fmt.Fprintln(logText, "[#ff0000]ISO镜像上传失败")
+					_, _ = fmt.Fprintln(logText, "[#ff0000]ISO镜像上传失败！")
 				} else {
 					_, _ = fmt.Fprintln(logText, "[#008000]ISO镜像上传成功！")
 					// todo 挂载镜像到autoyast/iso文件夹
-					utils.ExecShell("mount " + "/home/" + setting.FtpUserName + "/" + setting.AutoYastDir + "SLE12_SP4.iso " + "/home/" + setting.FtpUserName + "/" + setting.AutoYastDir + "iso")
+					utils.FtpExecShell("mount " + "/home/" + setting.FtpUserName + "/" + setting.AutoYastDir + "SLE12_SP4.iso " + "/home/" + setting.FtpUserName + "/" + setting.AutoYastDir + "iso")
 					_, _ = fmt.Fprintln(logText, "[#008000]挂载ISO成功！")
 				}
 			}()
@@ -332,12 +333,19 @@ func OS() (title string, content tview.Primitive) {
 	return "安装系统", MenuList(10, listView)
 }
 
-// 系统标准化
+// 系统标准化配置
 func OsStandardization() (title string, content tview.Primitive) {
 	listView := tview.NewList().
 		AddItem("host节点基础配置", "", '1', func() {
 			go func() {
-				// todo 系统标准化
+				/*
+					todo 连接上分区
+				*/
+				if err := sysconfig.BaseConfig(); err != nil {
+					_, _ = fmt.Fprintln(logText, "[#ff0000]hostname修改失败")
+				} else {
+					_, _ = fmt.Fprintln(logText, "[#008000]hostname修改成功")
+				}
 
 			}()
 		}).AddItem("软件安装", "", '2', func() {
@@ -382,7 +390,7 @@ func OsStandardization() (title string, content tview.Primitive) {
 
 		}()
 	})
-	return "系统标准化", MenuList(22, listView)
+	return "系统配置", MenuList(22, listView)
 }
 
 //func Database() (title string, content tview.Primitive) {
@@ -408,8 +416,7 @@ func Help() (title string, content tview.Primitive) {
 			"Ctrl+P 切换上一页面\n\n"+
 			"方向键或数字键进行选择\n\n"+
 			"AutoYast模板系统SLE12_SP4密码为P1cc@xfzy\n\n其余配置请对conf/app.ini配置文件进行修改\n\n"+
-			"要上传的ISO镜像位置为当前目录,文件名必须为SLE12_SP4.iso\n\n"+
-			"[#ff0000]必须修改ssh配置文件PasswordAuthentication的值为yes")
+			"要上传的ISO镜像位置为当前目录,文件名必须为[#ff0000]SLE12_SP4.iso")
 	}()
 	return "帮助？", MenuList(20, textView)
 }

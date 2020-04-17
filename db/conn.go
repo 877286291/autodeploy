@@ -149,3 +149,14 @@ func GetLparAndSGInfoFromDb() (lparObjUriList, sgObjUriList []map[string]string)
 	}
 	return
 }
+
+func GetIp() (ipList []map[string]string) {
+	rows, _ := database.Query("SELECT lparname,ip from lpar_info")
+	var lparname, ip string
+	for rows.Next() {
+		_ = rows.Scan(&lparname, &ip)
+		result := map[string]string{lparname: ip}
+		ipList = append(ipList, result)
+	}
+	return
+}

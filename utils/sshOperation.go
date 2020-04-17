@@ -6,10 +6,11 @@ import (
 	"golang.org/x/crypto/ssh"
 	"log"
 	"net"
+	"os"
 	"time"
 )
 
-func connect(user, password, host string, port int) (*ssh.Session, error) {
+func Connect(user, password, host string, port int) (*ssh.Session, error) {
 	var (
 		auth         []ssh.AuthMethod
 		addr         string
@@ -18,9 +19,21 @@ func connect(user, password, host string, port int) (*ssh.Session, error) {
 		session      *ssh.Session
 		err          error
 	)
+	keyboardInteractiveChallenge := func(
+		user,
+		instruction string,
+		questions []string,
+		echos []bool,
+	) (answers []string, err error) {
+		if len(questions) == 0 {
+			return []string{}, nil
+		}
+		return []string{password}, nil
+	}
 	// get auth method
 	auth = make([]ssh.AuthMethod, 0)
 	auth = append(auth, ssh.Password(password))
+	auth = append(auth, ssh.KeyboardInteractive(keyboardInteractiveChallenge))
 
 	clientConfig = &ssh.ClientConfig{
 		User:    user,
@@ -46,12 +59,25 @@ func connect(user, password, host string, port int) (*ssh.Session, error) {
 	return session, nil
 }
 
-// 执行shell命令
-func ExecShell(command string) {
-	session, err := connect("root", "P1cc@xfzy", setting.FtpHost, 22)
+// FTP上执行shell命令
+func FtpExecShell(command string) {
+	session, err := Connect("root", "P1cc@xfzy", setting.FtpHost, 22)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer session.Close()
 	_ = session.Run(command)
+}
+
+// 分区上执行shell命令
+func LparExecShell(ip, command string) (err error) {
+	session, err := Connect("root", "P1cc@xfzy", ip, 22)
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	session.Stdout = os.Stdout
+	session.Stderr = os.Stderr
+	_ = session.Run(command)
+	return
 }

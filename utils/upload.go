@@ -23,9 +23,21 @@ var (
 )
 
 func init() {
+	keyboardInteractiveChallenge := func(
+		user,
+		instruction string,
+		questions []string,
+		echos []bool,
+	) (answers []string, err error) {
+		if len(questions) == 0 {
+			return []string{}, nil
+		}
+		return []string{setting.FtpPassWord}, nil
+	}
 	// get auth method
 	auth = make([]ssh.AuthMethod, 0)
 	auth = append(auth, ssh.Password(setting.FtpPassWord))
+	auth = append(auth, ssh.KeyboardInteractive(keyboardInteractiveChallenge))
 
 	clientConfig = &ssh.ClientConfig{
 		User:            setting.FtpUserName,
