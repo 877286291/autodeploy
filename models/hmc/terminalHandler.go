@@ -339,10 +339,16 @@ func OsStandardization() (title string, content tview.Primitive) {
 		AddItem("host节点基础配置", "", '1', func() {
 			go func() {
 				_, _ = fmt.Fprintf(logText, "%s 执行修改hostname,请稍等\n", time.Now().Format("2006-01-02 15:04:05"))
-				if _, err := sysconfig.BaseConfig(); err != nil {
-					_, _ = fmt.Fprintln(logText, "[#ff0000]hostname修改失败")
-				} else {
-					_, _ = fmt.Fprintln(logText, "[#008000]hostname修改成功")
+				for _, obj := range sysconfig.IpList {
+					for lparName, ip := range obj {
+						go func() {
+							if _, err := sysconfig.BaseConfig(lparName, ip); err != nil {
+								_, _ = fmt.Fprintf(logText, "[#ff0000]分区[%s]hostname修改失败\n", lparName)
+							} else {
+								_, _ = fmt.Fprintf(logText, "[#008000]分区[%s]hostname修改成功\n", lparName)
+							}
+						}()
+					}
 				}
 
 			}()
@@ -401,16 +407,6 @@ func OsStandardization() (title string, content tview.Primitive) {
 	return "系统配置", MenuList(22, listView)
 }
 
-//func Database() (title string, content tview.Primitive) {
-//	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
-//	})
-//	return "查看数据库", MenuList(10, textView)
-//}
-//func AutoDeploy() (title string, content tview.Primitive) {
-//	textView := tview.NewTextView().SetDoneFunc(func(key tcell.Key) {
-//	}).SetBorder(true)
-//	return "自动部署", MenuList(10, textView)
-//}
 func Help() (title string, content tview.Primitive) {
 	textView := tview.NewTextView().
 		SetDynamicColors(true).

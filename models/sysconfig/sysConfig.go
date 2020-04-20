@@ -14,15 +14,10 @@ func init() {
 }
 
 // 更改hostname
-func BaseConfig() (stdout bytes.Buffer, err error) {
-	//var stdout bytes.Buffer
-	for _, obj := range IpList {
-		for lparName, ip := range obj {
-			if stdout, err = utils.LparExecShell(ip, "echo "+lparName+">/etc/hostname"); err != nil {
-				_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-				return
-			}
-		}
+func BaseConfig(lparName, ip string) (stdout bytes.Buffer, err error) {
+	if stdout, err = utils.LparExecShell(ip, "echo "+lparName+">/etc/hostname"); err != nil {
+		_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
+		return
 	}
 	return
 }
