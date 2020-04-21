@@ -75,29 +75,31 @@ func Upload(localPath string, remotePath string) (err error) {
 	if s.IsDir() {
 		uploadDirectory(localPath, remotePath)
 	} else {
-		uploadFile(localPath, remotePath)
+		if err = uploadFile(localPath, remotePath, sftpClient); err != nil {
+			return
+		}
 	}
 	return
 }
 
-func uploadFile(localFilePath string, remotePath string) {
+func uploadFile(localFilePath string, remotePath string, sftpClient *sftp.Client) (err error) {
 	//打开本地文件流
-	srcFile, err := os.Open(localFilePath)
+	var srcFile *os.File
+	srcFile, err = os.Open(localFilePath)
 	if err != nil {
-		fmt.Println("os.Open error : ", localFilePath)
 		_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-		log.Fatal(err)
+		return
 	}
 	//关闭文件流
 	defer srcFile.Close()
 	//上传到远端服务器的文件名,与本地路径末尾相同
 	var remoteFileName = path.Base(localFilePath)
 	//打开远程文件,如果不存在就创建一个
-	dstFile, err := sftpClient.Create(path.Join(remotePath, remoteFileName))
+	var dstFile *sftp.File
+	dstFile, err = sftpClient.Create(path.Join(remotePath, remoteFileName))
 	if err != nil {
-		fmt.Println("sftpClient.Create error : ", path.Join(remotePath, remoteFileName))
 		_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-		log.Fatal(err)
+		return
 	}
 	//关闭远程文件
 	defer dstFile.Close()
@@ -109,19 +111,21 @@ func uploadFile(localFilePath string, remotePath string) {
 	if fileSize > 100*1024^2 {
 		//一次复制10M
 		buffer := make([]byte, 10*1024^2)
-		_, err := io.CopyBuffer(dstFile, srcFile, buffer)
+		_, err = io.CopyBuffer(dstFile, srcFile, buffer)
 		if err != nil {
 			_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
-			log.Println(err)
+			return
 		}
 	} else {
-		ff, err := ioutil.ReadAll(srcFile)
+		var ff []byte
+		ff, err = ioutil.ReadAll(srcFile)
 		if err != nil {
-			fmt.Println("ReadAll error : ", localFilePath)
 			_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
+			return
 		}
 		_, _ = dstFile.Write(ff)
 	}
+	return
 }
 
 func uploadDirectory(localPath string, remotePath string) {
@@ -141,7 +145,10 @@ func uploadDirectory(localPath string, remotePath string) {
 			_ = sftpClient.Mkdir(remoteFilePath)
 			uploadDirectory(localFilePath, remoteFilePath)
 		} else {
-			uploadFile(path.Join(localPath, backupDir.Name()), remotePath)
+			if err := uploadFile(path.Join(localPath, backupDir.Name()), remotePath, sftpClient); err != nil {
+				_ = ioutil.WriteFile("err.log", []byte(err.Error()), 0777)
+				log.Fatal(err)
+			}
 		}
 	}
 }

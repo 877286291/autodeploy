@@ -4,18 +4,20 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/aurora/autodeploy/pkg/setting"
+	"github.com/pkg/sftp"
 	"golang.org/x/crypto/ssh"
 	"log"
 	"net"
 	"time"
 )
 
+var client *ssh.Client
+
 func Connect(user, password, host string, port int) (*ssh.Session, error) {
 	var (
 		auth         []ssh.AuthMethod
 		addr         string
 		clientConfig *ssh.ClientConfig
-		client       *ssh.Client
 		session      *ssh.Session
 		err          error
 	)
@@ -79,5 +81,21 @@ func LparExecShell(ip, command string) (stdoutBuf bytes.Buffer, err error) {
 	defer session.Close()
 	session.Stdout = &stdoutBuf
 	err = session.Run(command)
+	return
+}
+
+func UploadSoftware(ip string) (err error) {
+	var session *ssh.Session
+	if session, err = Connect("root", "P1cc@xfzy", ip, 22); err != nil {
+		return
+	}
+	if sftpClient, err = sftp.NewClient(client); err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer session.Close()
+	if err = uploadFile("multipath_s390.tar.gz", "/root", sftpClient); err != nil {
+		return
+	}
 	return
 }

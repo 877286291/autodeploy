@@ -354,7 +354,16 @@ func OsStandardization() (title string, content tview.Primitive) {
 			}()
 		}).AddItem("软件安装", "", '2', func() {
 		go func() {
-
+			_, _ = fmt.Fprintf(logText, "%s 执行multipath安装,请稍等\n", time.Now().Format("2006-01-02 15:04:05"))
+			for _, obj := range sysconfig.IpList {
+				for lparName, ip := range obj {
+					if _, err := sysconfig.InstallSoftware(ip); err != nil {
+						_, _ = fmt.Fprintf(logText, "[#ff0000]分区[%s]multipath安装失败\n", lparName)
+					} else {
+						_, _ = fmt.Fprintf(logText, "[#008000]分区[%s]multipath安装成功\n", lparName)
+					}
+				}
+			}
 		}()
 	}).AddItem("网络连通性测试", "", '3', func() {
 		go func() {
